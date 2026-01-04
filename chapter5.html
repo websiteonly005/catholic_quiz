@@ -1,482 +1,464 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>哥林多前书第五章 - 圣经问答</title>
-    
-    <!-- 引入 Tailwind CSS (用于样式) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 引入 React 和 ReactDOM (用于逻辑) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- 引入 Babel (用于在浏览器中解析 JSX) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catholic Bible Quiz - 1 Corinthians Ch.5</title>
     <style>
-        /* 自定义动画 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* 保持统一的优美样式 */
+        :root {
+            --primary-color: #0066cc;
+            --bg-color: #f0f2f5;
+            --correct-bg: #d4edda;
+            --correct-text: #155724;
+            --wrong-bg: #f8d7da;
+            --wrong-text: #721c24;
+            --card-radius: 12px;
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            line-height: 1.6;
         }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
-        
-        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .lang-switch {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .view-hidden { display: none !important; }
+
+        .welcome-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: var(--card-radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .welcome-title { color: #2c3e50; font-size: 1.6rem; margin-bottom: 10px; }
+        .welcome-subtitle { color: #666; margin-bottom: 30px; }
+
+        .difficulty-menu { display: flex; flex-direction: column; gap: 15px; }
+
+        .diff-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 25px;
+            padding-right: 25px;
+        }
+        .diff-btn:active { transform: scale(0.98); }
+
+        .diff-btn.easy { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3); }
+        .diff-btn.medium { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); box-shadow: 0 4px 10px rgba(253, 160, 133, 0.3); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .diff-btn.hard { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); box-shadow: 0 4px 10px rgba(235, 51, 73, 0.3); }
+        .diff-btn.all { background: white; color: #444; border: 2px solid #eee; }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #0066cc;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: -10px;
+        }
+
+        .mode-label { font-weight: bold; color: #555; font-size: 0.9rem; text-transform: uppercase; }
+
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1a1a1a; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+        button.option-btn {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 1rem;
+            color: #444;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.4;
+        }
+
+        button.option-btn:active { background-color: #e2e6ea; }
+        button.option-btn.correct { background-color: var(--correct-bg); border-color: #c3e6cb; color: var(--correct-text); font-weight: 500; }
+        button.option-btn.wrong { background-color: var(--wrong-bg); border-color: #f5c6cb; color: var(--wrong-text); opacity: 0.7; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .feedback-box.show-correct { display: block; background-color: var(--correct-bg); color: var(--correct-text); border: 1px solid #c3e6cb; }
+        .feedback-box.show-wrong { display: block; background-color: var(--wrong-bg); color: var(--wrong-text); border: 1px solid #f5c6cb; }
+
+        .explanation-text { margin-top: 8px; font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #999; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 min-h-screen">
+<body>
 
-    <div id="root"></div>
+<div class="container">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="home-link" id="link-home">🏠 目录 (Index)</a>
+        <button class="lang-switch" onclick="toggleLanguage()">English</button>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-
-        // --- 图标组件 (SVG) ---
-        const IconBase = ({ children, size = 24, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
-        );
-
-        const BookOpen = (props) => <IconBase {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconBase>;
-        const CheckCircle = (props) => <IconBase {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></IconBase>;
-        const XCircle = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></IconBase>;
-        const Trophy = (props) => <IconBase {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></IconBase>;
-        const Clock = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconBase>;
-        const ArrowRight = (props) => <IconBase {...props}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></IconBase>;
-        const RefreshCcw = (props) => <IconBase {...props}><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></IconBase>;
-        const Star = (props) => <IconBase {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></IconBase>;
-        const Shield = (props) => <IconBase {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></IconBase>;
-        const Zap = (props) => <IconBase {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
-
-        const QuizApp = () => {
-          // --- 状态管理 ---
-          const [gameState, setGameState] = useState('menu'); // 'menu', 'playing', 'results'
-          const [difficulty, setDifficulty] = useState('easy'); // 'easy', 'medium', 'hard'
-          const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-          const [score, setScore] = useState(0);
-          const [showFeedback, setShowFeedback] = useState(false);
-          const [isCorrect, setIsCorrect] = useState(false);
-          const [selectedOption, setSelectedOption] = useState(null);
-          const [timeLeft, setTimeLeft] = useState(null);
-          const [timerActive, setTimerActive] = useState(false);
-
-          // --- 题目数据 (基于哥林多前书第五章) ---
-          const questions = [
-            {
-              id: 1,
-              question: "在第五章开头，保罗提到哥林多教会中发生了什么严重的淫乱行为？",
-              options: [
-                "有人娶了自己的继母（收了他父亲的妻子）",
-                "有人崇拜偶像",
-                "有人在聚会中醉酒",
-                "有人偷窃教会的财物"
-              ],
-              correctAnswer: 0,
-              explanation: "经文 5:1：'风闻在你们中间有淫乱的事……甚至有人收了他的继母。'"
-            },
-            {
-              id: 2,
-              question: "面对这种罪行，哥林多教会当时的态度是什么？",
-              options: [
-                "极其悲伤并痛悔",
-                "立即将那人赶出去",
-                "自高自大，并不哀痛",
-                "写信给保罗求助"
-              ],
-              correctAnswer: 2,
-              explanation: "经文 5:2：'你们还是自高自大，并不哀痛，把行这事的人从你们中间赶出去。'"
-            },
-            {
-              id: 3,
-              question: "保罗判定要将行这事的人“交给撒但”，目的是什么？",
-              options: [
-                "让他永远灭亡",
-                "败坏他的肉体，使他的灵魂在主耶稣的日子可以得救",
-                "让他去别处传福音",
-                "向外邦人展示教会的严厉"
-              ],
-              correctAnswer: 1,
-              explanation: "经文 5:5：'要把这样的人交给撒但，败坏他的肉体，使他的灵魂在主耶稣的日子可以得救。'"
-            },
-            {
-              id: 4,
-              question: "保罗用什么比喻来形容罪在教会中的扩散？",
-              options: [
-                "一点面酵能使全团都发起来",
-                "一颗坏种子能毁掉整片田地",
-                "一滴墨水能染黑整杯水",
-                "一个破口能使船沉没"
-              ],
-              correctAnswer: 0,
-              explanation: "经文 5:6：'岂不知一点面酵能使全团都发起来吗？'"
-            },
-            {
-              id: 5,
-              question: "保罗称基督为我们的什么？",
-              options: [
-                "赎罪祭",
-                "逾越节的羔羊",
-                "大祭司",
-                "好牧人"
-              ],
-              correctAnswer: 1,
-              explanation: "经文 5:7：'因为我们逾越节的羔羊基督，已经被杀献祭了。'"
-            },
-            {
-              id: 6,
-              question: "保罗教导我们要用什么来守这节（过基督徒的生活）？",
-              options: [
-                "禁食和祷告",
-                "旧酵和恶毒的饼",
-                "诚实真正的无酵饼",
-                "十一奉献和善行"
-              ],
-              correctAnswer: 2,
-              explanation: "经文 5:8：'只用诚实真正的无酵饼。'"
-            },
-            {
-              id: 7,
-              question: "保罗说“不可与淫乱的人相交”，这话是指？",
-              options: [
-                "世上一切淫乱的人",
-                "所有非基督徒",
-                "教会内称为弟兄却行淫乱的人",
-                "罗马的公民"
-              ],
-              correctAnswer: 2,
-              explanation: "经文 5:9-11 保罗解释不是指世上的人（否则就得离开世界），而是指称为弟兄却行恶的人。"
-            },
-            {
-              id: 8,
-              question: "对于那些称为弟兄却行勒索、拜偶像或辱骂的人，保罗说应当如何对待？",
-              options: [
-                "劝勉三次",
-                "为他祷告但不惩罚",
-                "不可与他相交，就是与他吃饭都不可",
-                "要求他缴纳罚款"
-              ],
-              correctAnswer: 2,
-              explanation: "经文 5:11：'……这样的人不可与他相交，就是与他吃饭都不可。'"
-            },
-            {
-              id: 9,
-              question: "保罗说审判“外人”（非信徒）的是谁？",
-              options: [
-                "教会的长老",
-                "保罗自己",
-                "神",
-                "罗马政府"
-              ],
-              correctAnswer: 2,
-              explanation: "经文 5:13：'至于外人有神审判他们。'"
-            },
-            {
-              id: 10,
-              question: "本章最后一句的命令是什么？",
-              options: [
-                "要爱你的邻舍",
-                "你们应当把那恶人从你们中间赶出去",
-                "凡事包容，凡事相信",
-                "彼此亲嘴问安"
-              ],
-              correctAnswer: 1,
-              explanation: "经文 5:13：'你们应当把那恶人从你们中间赶出去。'"
-            }
-          ];
-
-          // --- 计时器逻辑 ---
-          useEffect(() => {
-            let interval = null;
-            if (timerActive && timeLeft > 0 && !showFeedback) {
-              interval = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
-              }, 1000);
-            } else if (timeLeft === 0 && timerActive && !showFeedback) {
-              handleTimeOut();
-            }
-            return () => clearInterval(interval);
-          }, [timerActive, timeLeft, showFeedback]);
-
-          const handleTimeOut = () => {
-            setTimerActive(false);
-            setIsCorrect(false);
-            setShowFeedback(true);
-            setSelectedOption(-1); // -1 表示超时
-          };
-
-          // --- 游戏控制函数 ---
-          const startGame = (selectedDiff) => {
-            setDifficulty(selectedDiff);
-            setGameState('playing');
-            setCurrentQuestionIndex(0);
-            setScore(0);
-            resetQuestionState(selectedDiff);
-          };
-
-          const resetQuestionState = (diff) => {
-            setShowFeedback(false);
-            setSelectedOption(null);
-            setIsCorrect(false);
+    <!-- VIEW 1: Welcome / Difficulty Selection -->
+    <div id="welcome-view">
+        <div class="welcome-card">
+            <h1 class="welcome-title" id="txt-title">格林多前书测验</h1>
+            <p class="welcome-subtitle" id="txt-subtitle">第五章：除去乱伦与旧酵</p>
             
-            // 设置时间限制
-            if (diff === 'easy') {
-              setTimeLeft(null); // 无限制
-              setTimerActive(false);
-            } else if (diff === 'medium') {
-              setTimeLeft(20);
-              setTimerActive(true);
-            } else if (diff === 'hard') {
-              setTimeLeft(10);
-              setTimerActive(true);
-            }
-          };
-
-          const handleAnswerClick = (optionIndex) => {
-            if (showFeedback) return; // 防止重复点击
-
-            setTimerActive(false);
-            setSelectedOption(optionIndex);
-            const correct = optionIndex === questions[currentQuestionIndex].correctAnswer;
-            setIsCorrect(correct);
-            setShowFeedback(true);
-
-            if (correct) {
-              // 计算分数：基础分 + 难度加成
-              let points = 10;
-              if (difficulty === 'medium') points = 15;
-              if (difficulty === 'hard') points = 20;
-              setScore((prev) => prev + points);
-            }
-          };
-
-          const handleNextQuestion = () => {
-            if (currentQuestionIndex < questions.length - 1) {
-              setCurrentQuestionIndex((prev) => prev + 1);
-              resetQuestionState(difficulty);
-            } else {
-              setGameState('results');
-            }
-          };
-
-          const restartGame = () => {
-            setGameState('menu');
-          };
-
-          // --- 界面组件 ---
-
-          const MenuScreen = () => (
-            <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-8 animate-fade-in">
-              <div className="space-y-4">
-                <div className="flex justify-center">
-                  <BookOpen size={64} className="text-blue-600" />
-                </div>
-                <h1 className="text-4xl font-bold text-gray-800 tracking-tight">哥林多前书 第5章</h1>
-                <p className="text-xl text-gray-600">圣经知识测验</p>
-              </div>
-
-              <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-700 mb-6">请选择挑战难度</h2>
-                <div className="space-y-4">
-                  <button 
-                    onClick={() => startGame('easy')}
-                    className="w-full flex items-center justify-between p-4 bg-green-50 hover:bg-green-100 text-green-700 rounded-xl transition-all border border-green-200 hover:scale-105"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Star className="fill-current" size={20} />
-                      <span className="font-bold">简单</span>
-                    </div>
-                    <span className="text-sm opacity-75">无时间限制</span>
-                  </button>
-
-                  <button 
-                    onClick={() => startGame('medium')}
-                    className="w-full flex items-center justify-between p-4 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-xl transition-all border border-yellow-200 hover:scale-105"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Shield className="fill-current" size={20} />
-                      <span className="font-bold">中等</span>
-                    </div>
-                    <span className="text-sm opacity-75">20秒/题</span>
-                  </button>
-
-                  <button 
-                    onClick={() => startGame('hard')}
-                    className="w-full flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl transition-all border border-red-200 hover:scale-105"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Zap className="fill-current" size={20} />
-                      <span className="font-bold">困难</span>
-                    </div>
-                    <span className="text-sm opacity-75">10秒/题</span>
-                  </button>
-                </div>
-              </div>
+            <p style="text-align: left; font-weight: bold; margin-bottom: 15px; color:#444;" id="txt-select-diff">请选择难度：</p>
+            
+            <div class="difficulty-menu">
+                <button class="diff-btn easy" onclick="startQuiz('easy')">
+                    <span id="btn-easy">简单</span> <span>★ 10题</span>
+                </button>
+                <button class="diff-btn medium" onclick="startQuiz('medium')">
+                    <span id="btn-medium">中等</span> <span>★★ 10题</span>
+                </button>
+                <button class="diff-btn hard" onclick="startQuiz('hard')">
+                    <span id="btn-hard">困难</span> <span>★★★ 10题</span>
+                </button>
+                <button class="diff-btn all" onclick="startQuiz('all')">
+                    <span id="btn-all">所有题目</span> <span>30题</span>
+                </button>
             </div>
-          );
+        </div>
+        <div class="footer" id="txt-footer-1">天主教圣经测验</div>
+    </div>
 
-          const QuizScreen = () => {
-            const currentQ = questions[currentQuestionIndex];
+    <!-- VIEW 2: Quiz List -->
+    <div id="quiz-view" class="view-hidden">
+        <div class="quiz-header">
+            <button class="back-btn" onclick="goBack()" id="btn-back">← 返回</button>
+            <span class="mode-label" id="lbl-mode"></span>
+        </div>
+
+        <div id="quiz-list">
+            <!-- Questions injected here -->
+        </div>
+        
+        <div class="footer" id="txt-footer-2">天主教圣经测验</div>
+    </div>
+
+</div>
+
+<script>
+    // --- State ---
+    let currentLang = 'zh';
+    let currentDifficulty = null; 
+    let userAnswers = {}; 
+
+    // --- Resources ---
+    const uiText = {
+        zh: {
+            title: "格林多前书测验",
+            subtitle: "第五章：除去乱伦与旧酵",
+            selectDiff: "请选择难度：",
+            btnEasy: "简单",
+            btnMedium: "中等",
+            btnHard: "困难",
+            btnAll: "所有题目",
+            btnBack: "← 返回菜单",
+            footer: "天主教圣经测验",
+            langBtn: "English",
+            homeBtn: "🏠 目录",
+            correct: "✓ 回答正确！",
+            wrong: "✗ 回答错误。",
+            correctIs: "正确答案是：",
+            noteTitle: "解析："
+        },
+        en: {
+            title: "1 Corinthians Quiz",
+            subtitle: "Chapter 5: Incest & Old Leaven",
+            selectDiff: "Select Difficulty:",
+            btnEasy: "Easy",
+            btnMedium: "Medium",
+            btnHard: "Hard",
+            btnAll: "All Questions",
+            btnBack: "← Back Menu",
+            footer: "Catholic Bible Quiz",
+            langBtn: "中文",
+            homeBtn: "🏠 Index",
+            correct: "✓ Correct!",
+            wrong: "✗ Incorrect.",
+            correctIs: "The correct answer is:",
+            noteTitle: "Note:"
+        }
+    };
+
+    // --- QUESTIONS DATA FOR CHAPTER 5 ---
+    const questionsData = [
+        // --- EASY (Ch5) ---
+        { id: 401, diff: 'easy', correct: 1, zh: { q: "1. 本章开头提到，在格林多教会中发生了什么严重的淫乱行为？", options: ["醉酒", "有人收了他父亲的妻子（继母）", "偷窃教会财物", "崇拜偶像"], note: "第1节：'甚至有人收了他父亲的妻子。'" }, en: { q: "1. What serious immorality was reported at the beginning of this chapter?", options: ["Drunkenness", "A man has his father's wife", "Theft", "Idolatry"], note: "Verse 1: 'Someone has his father's wife'." } },
+        { id: 402, diff: 'easy', correct: 2, zh: { q: "2. 面对这种罪行，格林多教会当时的态度是什么？", options: ["极其悲伤", "立即惩罚", "自高自大，并不哀痛", "写信求助"], note: "第2节：'你们竟还自高自大，而不宁可痛哭。'" }, en: { q: "2. What was the attitude of the Corinthian church towards this sin?", options: ["Sorrowful", "Punished immediately", "Arrogant and did not mourn", "Asked for help"], note: "Verse 2: 'You are arrogant! Ought you not rather to mourn?'" } },
+        { id: 403, diff: 'easy', correct: 0, zh: { q: "3. 保禄用什么比喻来形容罪在教会中的扩散？", options: ["一点面酵能使全团发酵", "一滴墨水染黑全杯", "一颗坏种子毁坏田地", "一个破口使船沉没"], note: "第6节：'岂不知一点面酵能使全团发酵吗？'" }, en: { q: "3. What metaphor does Paul use for the spread of sin?", options: ["A little leaven leavens the whole lump", "Ink in water", "Bad seed in field", "Leak in a ship"], note: "Verse 6: 'Little leaven leavens the whole lump'." } },
+        { id: 404, diff: 'easy', correct: 1, zh: { q: "4. 保禄称基督为我们的什么？", options: ["大祭司", "逾越节的羔羊", "好牧人", "君王"], note: "第7节：'因为我们的逾越节羔羊基督，已被祭杀作了牺牲。'" }, en: { q: "4. Paul refers to Christ as our...?", options: ["High Priest", "Passover Lamb", "Good Shepherd", "King"], note: "Verse 7: 'Our Paschal Lamb, Christ'." } },
+        { id: 405, diff: 'easy', correct: 2, zh: { q: "5. 保禄教导我们应当用什么来守这节？", options: ["禁食", "旧酵", "纯洁和真诚的无酵饼", "丰富的宴席"], note: "第8节：'只用纯洁和真诚的无酵饼。'" }, en: { q: "5. We should celebrate the feast with the unleavened bread of...?", options: ["Fasting", "Old leaven", "Sincerity and truth", "Rich banquet"], note: "Verse 8: 'Unleavened bread of sincerity and truth'." } },
+        { id: 406, diff: 'easy', correct: 3, zh: { q: "6. 保禄说要把那样的人（犯罪的人）怎样处理？", options: ["劝勉三次", "原谅他", "忽视他", "交给撒旦，并从你们中间除去"], note: "第5节：'把这样的人交给撒旦'；第13节：'把那恶人从你们中间除去'。" }, en: { q: "6. What should be done with the man who did this?", options: ["Warn 3 times", "Forgive him", "Ignore him", "Deliver to Satan / Drive him out"], note: "Verse 5 & 13." } },
+        { id: 407, diff: 'easy', correct: 0, zh: { q: "7. 保禄说“不可与淫乱的人相交”，这话是指？", options: ["教会内称为弟兄却淫乱的人", "世上所有淫乱的人", "非信徒", "罗马人"], note: "第11节：'是指如果有称为弟兄的，而仍行淫乱...'" }, en: { q: "7. 'Do not associate with immoral people' refers to whom?", options: ["A brother who is immoral", "All immoral people of world", "Non-believers", "Romans"], note: "Verse 11: 'If anyone who bears the name of brother...'." } },
+        { id: 408, diff: 'easy', correct: 2, zh: { q: "8. 对于那些称为弟兄却行恶的人，保禄说甚至不可与他做什么？", options: ["说话", "握手", "一起吃饭", "同住"], note: "第11节：'甚至不可与他共食。'" }, en: { q: "8. Paul says we should not even ____ with such a person?", options: ["Speak", "Shake hands", "Eat", "Live"], note: "Verse 11: 'Not even to eat with such a one'." } },
+        { id: 409, diff: 'easy', correct: 1, zh: { q: "9. 谁负责审判教会以外的人（外人）？", options: ["教会", "天主", "保禄", "凯撒"], note: "第13节：'至于外面的人，有天主审判。'" }, en: { q: "9. Who judges those outside the church?", options: ["The Church", "God", "Paul", "Caesar"], note: "Verse 13: 'God judges those outside'." } },
+        { id: 410, diff: 'easy', correct: 0, zh: { q: "10. 把犯罪的人交给撒旦，目的是败坏他的肉体，为了使他的灵魂如何？", options: ["在主的日子得救", "永远灭亡", "受尽痛苦", "悔改归向犹太教"], note: "第5节：'为使他的灵魂在主的日子可以得救。'" }, en: { q: "10. Deliver him to Satan for destruction of flesh, so that his spirit may be...?", options: ["Saved in the day of the Lord", "Destroyed forever", "Tormented", "Converted to Judaism"], note: "Verse 5: 'Saved in the day of the Lord'." } },
+
+        // --- MEDIUM (Ch5) ---
+        { id: 411, diff: 'medium', correct: 1, zh: { q: "1. 保禄说虽然他的身体不在他们那里，但什么是在那里的？", options: ["书信", "心神（Spirit）", "代表", "名声"], note: "第3节：'我身体虽不在你们那里，但心神却在。'" }, en: { q: "1. Paul says although absent in body, he is present in...?", options: ["Letter", "Spirit", "Representative", "Fame"], note: "Verse 3: 'Present in spirit'." } },
+        { id: 412, diff: 'medium', correct: 2, zh: { q: "2. 如果我们真的要避开世上所有淫乱、贪婪的人，我们就得怎么做？", options: ["躲进修道院", "自杀", "离开这个世界", "时刻祈祷"], note: "第10节：'若然，你们就非离开这世界不可。'" }, en: { q: "2. If we were to avoid all immoral people of this world, we would have to...?", options: ["Join a monastery", "Commit suicide", "Go out of the world", "Pray always"], note: "Verse 10." } },
+        { id: 413, diff: 'medium', correct: 3, zh: { q: "3. 保禄列举了不可相交的“弟兄”的罪行，除了淫乱、贪婪、拜偶像外，还包括？", options: ["不纳税", "不聚会", "不读经", "勒索、谩骂、醉酒"], note: "第11节：'或勒索的，或谩骂的，或醉酒的。'" }, en: { q: "3. Besides immorality, greed, idolatry, what else is listed?", options: ["Not taxing", "Not meeting", "Not reading", "Robber, reviler, drunkard"], note: "Verse 11." } },
+        { id: 414, diff: 'medium', correct: 0, zh: { q: "4. 为什么要清除旧酵？", options: ["好使你们成为新面团", "因为旧酵不好吃", "为了遵守犹太法律", "为了显得神圣"], note: "第7节：'你们应把旧酵清除，好使你们成为新面团。'" }, en: { q: "4. Why cleanse out the old leaven?", options: ["To be a new lump", "Tastes bad", "Jewish law", "Look holy"], note: "Verse 7." } },
+        { id: 415, diff: 'medium', correct: 1, zh: { q: "5. 保禄说“我曾写信告诉过你们”，暗示了什么？", options: ["这是他的第一封信", "在此之前还有一封书信", "他是在梦中写的", "他忘记了写过什么"], note: "第9节：'我在信上曾给你们写过...'，暗示《格前》之前可能有另一封信。" }, en: { q: "5. 'I wrote to you in my letter' implies?", options: ["This is the first letter", "There was a previous letter", "Written in a dream", "He forgot"], note: "Verse 9 implies a previous letter." } },
+        { id: 416, diff: 'medium', correct: 2, zh: { q: "6. 这里的“审判”原则是：我们不审判外人，只审判？", options: ["自己", "天使", "教内的人（内部的人）", "仇敌"], note: "第12节：'审判教外的人，与我何干？...你们岂不是审判教内的人吗？'" }, en: { q: "6. The principle of judgment here: We don't judge outsiders, but...?", options: ["Ourselves", "Angels", "Those inside", "Enemies"], note: "Verse 12: 'Those inside'." } },
+        { id: 417, diff: 'medium', correct: 0, zh: { q: "7. 在第4节，保禄实施惩戒时，是依仗谁的权能？", options: ["主耶稣", "彼得", "摩西", "罗马皇帝"], note: "第4节：'并有我们主耶稣的权能。'" }, en: { q: "7. By whose power does Paul execute this judgment?", options: ["Lord Jesus", "Peter", "Moses", "Emperor"], note: "Verse 4: 'Power of our Lord Jesus'." } },
+        { id: 418, diff: 'medium', correct: 3, zh: { q: "8. “诚实真正的无酵饼”象征着基督徒应具备什么品质？", options: ["富有和慷慨", "智慧和知识", "能力和权柄", "纯洁和真理"], note: "第8节：Sincerity and Truth (纯洁/诚实 和 真理/真诚)。" }, en: { q: "8. 'Unleavened bread of sincerity and truth' symbolizes?", options: ["Wealth", "Wisdom", "Power", "Purity and Truth"], note: "Verse 8." } },
+        { id: 419, diff: 'medium', correct: 1, zh: { q: "9. “你们本是无酵的”这句话说明了信徒的什么状态？", options: ["他们从不犯罪", "他们在基督内的地位是圣洁的", "他们不吃面包", "他们是犹太人"], note: "第7节：'正如你们原是无酵的一样'（地位上的成圣）。" }, en: { q: "9. 'As you really are unleavened' indicates believers'...", options: ["Sinlessness", "Status in Christ", "Diet", "Race"], note: "Verse 7: Status." } },
+        { id: 420, diff: 'medium', correct: 2, zh: { q: "10. 本章结尾引用的命令“要把那恶人从你们中间除去”，源自旧约哪卷书的常见句式？", options: ["创世纪", "圣咏", "申命纪", "箴言"], note: "这种句式常见于《申命纪》（如17:7, 19:19等）。" }, en: { q: "10. 'Drive out the wicked person' echoes a command from?", options: ["Genesis", "Psalms", "Deuteronomy", "Proverbs"], note: "Common in Deuteronomy." } },
+
+        // --- HARD (Ch5) ---
+        { id: 421, diff: 'hard', correct: 1, zh: { q: "1. “败坏他的肉体”这一惩罚，在神学上通常被理解为？", options: ["立即处死他", "除去他罪恶的本性或让他遭受身体的苦难/疾病以致悔改", "让他下地狱", "让他破产"], note: "第5节：一般解释为身体的苦难或罪性的对付，目的是挽救灵性。" }, en: { q: "1. 'Destruction of the flesh' is theoretically understood as?", options: ["Execution", "Removing sinful nature / Physical suffering for repentance", "Hell", "Bankruptcy"], note: "Verse 5." } },
+        { id: 422, diff: 'hard', correct: 3, zh: { q: "2. 这种乱伦行为（收继母），保禄说甚至在什么人中也没有？", options: ["犹太人", "野蛮人", "罗马贵族", "外邦人（异教徒）"], note: "第1节：'甚至在外邦人中也没有。'" }, en: { q: "2. Paul says this incest is not found even among...?", options: ["Jews", "Barbarians", "Nobles", "Pagans/Gentiles"], note: "Verse 1." } },
+        { id: 423, diff: 'hard', correct: 0, zh: { q: "3. “旧酵”在本章中主要象征什么？", options: ["恶毒和邪恶", "律法主义", "错误的教义", "传统的仪式"], note: "第8节：'不可用旧酵，就是不可用恶毒和邪恶的酵。'" }, en: { q: "3. What does 'old leaven' primarily symbolize here?", options: ["Malice and evil", "Legalism", "False doctrine", "Rituals"], note: "Verse 8: 'Leaven of malice and evil'." } },
+        { id: 424, diff: 'hard', correct: 2, zh: { q: "4. 保禄提到“当我们主耶稣聚在一起”时，这意味着教会执行纪律是？", options: ["私下的行动", "个人的报复", "团体的、有权柄的行动", "罗马法律的要求"], note: "第4节：表明这是教会整体奉主名进行的正式行动。" }, en: { q: "4. 'When you are assembled' implies church discipline is?", options: ["Private", "Revenge", "Corporate/Authoritative", "Legal requirement"], note: "Verse 4." } },
+        { id: 425, diff: 'hard', correct: 1, zh: { q: "5. 除了《格林多前书》5章，新约哪里还提到过“交给撒旦”这一短语？", options: ["罗马书 1:18", "提摩太前书 1:20", "启示录 2:9", "雅各伯书 4:7"], note: "《提摩太前书》1:20提到许默纳约和亚历山大被交给撒旦。" }, en: { q: "5. Where else is 'handed over to Satan' found in NT?", options: ["Romans 1", "1 Timothy 1:20", "Revelation 2", "James 4"], note: "1 Tim 1:20 (Hymenaeus and Alexander)." } },
+        { id: 426, diff: 'hard', correct: 3, zh: { q: "6. 格林多教会之所以“自高自大”（Puffed up），可能是因为他们误解了什么？", options: ["洗礼的意义", "保禄的行程", "属灵的自由（Christian Liberty）", "复活的时间"], note: "他们可能误以为自己在基督里是自由的，甚至以此夸口（诺斯底主义倾向）。" }, en: { q: "6. The church was 'puffed up' likely due to misunderstanding...?", options: ["Baptism", "Paul's travel", "Resurrection", "Christian Liberty"], note: "Misuse of liberty." } },
+        { id: 427, diff: 'hard', correct: 0, zh: { q: "7. 保禄要求“清除旧酵”不仅是为了洁净教会，也是为了应验教会的什么身份？", options: ["无酵的新面团", "地上的盐", "世上的光", "基督的新妇"], note: "第7节：'好使你们成为新面团。'" }, en: { q: "7. 'Cleanse out old leaven' fulfills the church's identity as?", options: ["New unleavened lump", "Salt", "Light", "Bride"], note: "Verse 7." } },
+        { id: 428, diff: 'hard', correct: 2, zh: { q: "8. “不可与...共食”可能特指不可与这种人一起进行什么活动？", options: ["去餐馆", "家庭聚餐", "主的晚餐（圣餐/爱筵）", "喝咖啡"], note: "在早期教会背景下，通常指团契的爱筵和圣餐。" }, en: { q: "8. 'Not to eat with' likely specifically refers to?", options: ["Restaurants", "Family dinner", "Lord's Supper / Agape Feast", "Coffee"], note: "Eucharist context." } },
+        { id: 429, diff: 'hard', correct: 1, zh: { q: "9. 保禄对“教内”和“教外”审判的区别，确立了教会纪律的什么原则？", options: ["教会要管理全世界", "教会只管辖信徒的道德，不干涉非信徒", "教会不应有任何审判", "教会应把非信徒抓进来审判"], note: "第12-13节：界定了教会管辖权的范围。" }, en: { q: "9. The distinction between judging inside/outside establishes?", options: ["World rule", "Jurisdiction over believers only", "No judgment", "Arresting non-believers"], note: "Verse 12-13." } },
+        { id: 430, diff: 'hard', correct: 0, zh: { q: "10. 本章的核心神学思想是将教会视为一个？", options: ["圣洁的团体（Community of Holiness）", "政治组织", "慈善机构", "学习小组"], note: "整章强调教会的圣洁性，不能容忍罪恶发酵。" }, en: { q: "10. The core theological theme views the church as?", options: ["Community of Holiness", "Political party", "Charity", "Study group"], note: "Holiness." } }
+    ];
+
+    // --- Logic ---
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateUIText();
+        if (currentDifficulty) {
+            renderQuizList();
+        }
+    }
+
+    function updateUIText() {
+        const t = uiText[currentLang];
+        
+        // Navbar
+        document.querySelector('.lang-switch').textContent = t.langBtn;
+        document.getElementById('link-home').textContent = t.homeBtn;
+        
+        // Welcome View
+        document.getElementById('txt-title').textContent = t.title;
+        document.getElementById('txt-subtitle').textContent = t.subtitle;
+        document.getElementById('txt-select-diff').textContent = t.selectDiff;
+        document.getElementById('btn-easy').innerHTML = `${t.btnEasy} <span>★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-medium').innerHTML = `${t.btnMedium} <span>★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-hard').innerHTML = `${t.btnHard} <span>★★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-all').innerHTML = `${t.btnAll} <span>30${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('txt-footer-1').textContent = t.footer;
+
+        // Quiz View
+        document.getElementById('btn-back').textContent = t.btnBack;
+        document.getElementById('txt-footer-2').textContent = t.footer;
+        
+        if (currentDifficulty) {
+            let diffLabel = "";
+            if(currentDifficulty === 'easy') diffLabel = t.btnEasy;
+            else if(currentDifficulty === 'medium') diffLabel = t.btnMedium;
+            else if(currentDifficulty === 'hard') diffLabel = t.btnHard;
+            else diffLabel = t.btnAll;
+            document.getElementById('lbl-mode').textContent = diffLabel;
+        }
+    }
+
+    function startQuiz(difficulty) {
+        currentDifficulty = difficulty;
+        document.getElementById('welcome-view').classList.add('view-hidden');
+        document.getElementById('quiz-view').classList.remove('view-hidden');
+        updateUIText();
+        renderQuizList();
+        window.scrollTo(0,0);
+    }
+
+    function goBack() {
+        currentDifficulty = null;
+        document.getElementById('welcome-view').classList.remove('view-hidden');
+        document.getElementById('quiz-view').classList.add('view-hidden');
+    }
+
+    function renderQuizList() {
+        const container = document.getElementById('quiz-list');
+        container.innerHTML = ''; 
+        const t = uiText[currentLang];
+
+        const filteredQuestions = questionsData.filter(q => {
+            if (currentDifficulty === 'all') return true;
+            return q.diff === currentDifficulty;
+        });
+
+        if (filteredQuestions.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">No questions found.</div>`;
+            return;
+        }
+
+        filteredQuestions.forEach((item) => {
+            const data = item[currentLang];
+            const card = document.createElement('div');
+            card.className = 'card';
             
-            // 进度条计算
-            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.textContent = data.q;
+            card.appendChild(title);
 
-            return (
-              <div className="flex flex-col min-h-screen bg-gray-50 max-w-2xl mx-auto md:shadow-2xl overflow-hidden md:my-8 md:rounded-3xl">
-                {/* 顶部栏 */}
-                <div className="bg-white p-4 flex justify-between items-center shadow-sm z-10">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-gray-500">第 {currentQuestionIndex + 1}/{questions.length} 题</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {timeLeft !== null && (
-                       <div className={`flex items-center gap-1 font-mono font-bold text-lg ${timeLeft <= 5 ? 'text-red-600 animate-pulse' : 'text-blue-600'}`}>
-                         <Clock size={18} />
-                         {timeLeft}s
-                       </div>
-                    )}
-                    <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
-                      得分: {score}
-                    </div>
-                  </div>
-                </div>
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
 
-                {/* 进度条 */}
-                <div className="w-full bg-gray-200 h-2">
-                  <div 
-                    className="bg-blue-600 h-2 transition-all duration-500 ease-out" 
-                    style={{ width: `${progress}%` }}
-                  ></div>
-                </div>
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback-box';
 
-                {/* 题目区域 */}
-                <div className="flex-1 p-6 md:p-10 flex flex-col">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed">
-                    {currentQ.question}
-                  </h2>
+            const userAnswer = userAnswers[item.id]; 
+            const isAnswered = userAnswer !== undefined;
 
-                  <div className="space-y-4 flex-1">
-                    {currentQ.options.map((option, idx) => {
-                      // 决定按钮样式
-                      let btnClass = "w-full text-left p-4 rounded-xl border-2 transition-all duration-200 text-lg font-medium ";
-                      
-                      if (showFeedback) {
-                        if (idx === currentQ.correctAnswer) {
-                          btnClass += "bg-green-100 border-green-500 text-green-800"; // 正确答案总是绿色
-                        } else if (idx === selectedOption) {
-                          btnClass += "bg-red-100 border-red-500 text-red-800"; // 选错的显示红色
-                        } else {
-                          btnClass += "bg-gray-50 border-gray-100 text-gray-400"; // 其他变灰
-                        }
-                      } else {
-                        btnClass += "bg-white border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 hover:shadow-md active:scale-[0.99]";
-                      }
+            data.options.forEach((optText, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = optText;
+                
+                if (isAnswered) {
+                    btn.disabled = true;
+                    if (optIndex === item.correct) {
+                        btn.classList.add('correct');
+                    } else if (optIndex === userAnswer) {
+                        btn.classList.add('wrong');
+                    }
+                }
 
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => handleAnswerClick(idx)}
-                          disabled={showFeedback}
-                          className={btnClass}
-                        >
-                          <div className="flex items-start gap-3">
-                            <span className="opacity-60 font-mono text-sm mt-1">{String.fromCharCode(65 + idx)}.</span>
-                            {option}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                btn.onclick = function() {
+                    handleAnswer(item.id, item.correct, optIndex, grid, feedback, item);
+                };
+                grid.appendChild(btn);
+            });
 
-                {/* 反馈区域 - 固定在底部 */}
-                {showFeedback && (
-                  <div className={`p-6 animate-slide-up shadow-[0_-4px_20px_rgba(0,0,0,0.1)] ${isCorrect ? 'bg-green-50 border-t-2 border-green-500' : 'bg-red-50 border-t-2 border-red-500'}`}>
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="mt-1">
-                        {isCorrect ? <CheckCircle size={32} className="text-green-600" /> : <XCircle size={32} className="text-red-600" />}
-                      </div>
-                      <div>
-                        <h3 className={`font-bold text-lg ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                          {isCorrect ? '回答正确！' : (selectedOption === -1 ? '时间到！' : '回答错误')}
-                        </h3>
-                        <p className="text-gray-700 mt-1 text-sm md:text-base leading-relaxed">
-                          <span className="font-semibold">解析：</span>{currentQ.explanation}
-                        </p>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={handleNextQuestion}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-200"
-                    >
-                      {currentQuestionIndex === questions.length - 1 ? '查看结果' : '下一题'}
-                      <ArrowRight size={20} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          };
+            if (isAnswered) {
+                const isCorrect = userAnswer === item.correct;
+                if (isCorrect) {
+                    feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-correct');
+                } else {
+                    const correctText = data.options[item.correct];
+                    feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-wrong');
+                }
+            }
 
-          const ResultScreen = () => {
-            // 计算评级
-            const maxScore = difficulty === 'medium' ? 150 : (difficulty === 'hard' ? 200 : 100);
-            const percentage = (score / maxScore) * 100;
-            
-            let message = "";
-            if (percentage === 100) message = "完美！你对这章圣经非常熟悉！";
-            else if (percentage >= 80) message = "非常棒！继续保持！";
-            else if (percentage >= 60) message = "不错，但还有进步空间！";
-            else message = "建议再重读一遍哥林多前书第五章哦。";
+            card.appendChild(grid);
+            card.appendChild(feedback);
+            container.appendChild(card);
+        });
+    }
 
-            return (
-              <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50 animate-fade-in">
-                <div className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-md w-full">
-                  <div className="inline-flex p-4 bg-yellow-100 rounded-full text-yellow-600 mb-6">
-                    <Trophy size={48} />
-                  </div>
-                  
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">测试完成</h2>
-                  <p className="text-gray-500 mb-8">{message}</p>
-                  
-                  <div className="bg-blue-50 p-6 rounded-2xl mb-8">
-                    <div className="text-sm text-blue-600 uppercase font-bold tracking-wider mb-1">最终得分</div>
-                    <div className="text-5xl font-black text-blue-700">{score}</div>
-                    <div className="text-xs text-blue-400 mt-2">难度: {difficulty === 'easy' ? '简单' : (difficulty === 'medium' ? '中等' : '困难')}</div>
-                  </div>
+    function handleAnswer(qId, correctIndex, selectedIndex, grid, feedback, item) {
+        const t = uiText[currentLang];
+        const data = item[currentLang];
 
-                  <button 
-                    onClick={restartGame}
-                    className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-105"
-                  >
-                    <RefreshCcw size={20} />
-                    再试一次
-                  </button>
-                </div>
-              </div>
-            );
-          };
+        userAnswers[qId] = selectedIndex;
+        
+        const allBtns = grid.querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+        
+        const clickedBtn = allBtns[selectedIndex];
+        const correctBtn = allBtns[correctIndex];
 
-          // 主应用组件渲染逻辑
-          return (
-            <div className="font-sans text-gray-900">
-              {gameState === 'menu' && <MenuScreen />}
-              {gameState === 'playing' && <QuizScreen />}
-              {gameState === 'results' && <ResultScreen />}
-            </div>
-          );
-        };
+        if (selectedIndex === correctIndex) {
+            clickedBtn.classList.add('correct');
+            feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-correct');
+        } else {
+            clickedBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+            const correctText = data.options[correctIndex];
+            feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-wrong');
+        }
+    }
 
-        // 挂载应用
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<QuizApp />);
-    </script>
+    window.onload = function() {
+        updateUIText();
+    };
+</script>
+
 </body>
 </html>
