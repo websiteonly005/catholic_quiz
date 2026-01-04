@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catholic Bible Quiz - 1 Corinthians Ch.3</title>
+    <style>
+        /* 保持原有的优美样式 */
+        :root {
+            --primary-color: #0066cc;
+            --bg-color: #f0f2f5;
+            --correct-bg: #d4edda;
+            --correct-text: #155724;
+            --wrong-bg: #f8d7da;
+            --wrong-text: #721c24;
+            --card-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .lang-switch {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .view-hidden { display: none !important; }
+
+        .welcome-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: var(--card-radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .welcome-title { color: #2c3e50; font-size: 1.6rem; margin-bottom: 10px; }
+        .welcome-subtitle { color: #666; margin-bottom: 30px; }
+
+        .difficulty-menu { display: flex; flex-direction: column; gap: 15px; }
+
+        .diff-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 25px;
+            padding-right: 25px;
+        }
+        .diff-btn:active { transform: scale(0.98); }
+
+        .diff-btn.easy { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3); }
+        .diff-btn.medium { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); box-shadow: 0 4px 10px rgba(253, 160, 133, 0.3); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .diff-btn.hard { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); box-shadow: 0 4px 10px rgba(235, 51, 73, 0.3); }
+        .diff-btn.all { background: white; color: #444; border: 2px solid #eee; }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #0066cc;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: -10px;
+        }
+
+        .mode-label { font-weight: bold; color: #555; font-size: 0.9rem; text-transform: uppercase; }
+
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1a1a1a; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+        button.option-btn {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 1rem;
+            color: #444;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.4;
+        }
+
+        button.option-btn:active { background-color: #e2e6ea; }
+        button.option-btn.correct { background-color: var(--correct-bg); border-color: #c3e6cb; color: var(--correct-text); font-weight: 500; }
+        button.option-btn.wrong { background-color: var(--wrong-bg); border-color: #f5c6cb; color: var(--wrong-text); opacity: 0.7; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .feedback-box.show-correct { display: block; background-color: var(--correct-bg); color: var(--correct-text); border: 1px solid #c3e6cb; }
+        .feedback-box.show-wrong { display: block; background-color: var(--wrong-bg); color: var(--wrong-text); border: 1px solid #f5c6cb; }
+
+        .explanation-text { margin-top: 8px; font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="home-link" id="link-home">🏠 目录 (Index)</a>
+        <button class="lang-switch" onclick="toggleLanguage()">English</button>
+    </div>
+
+    <!-- VIEW 1: Welcome / Difficulty Selection -->
+    <div id="welcome-view">
+        <div class="welcome-card">
+            <h1 class="welcome-title" id="txt-title">格林多前书测验</h1>
+            <p class="welcome-subtitle" id="txt-subtitle">第三章：根基与工程</p>
+            
+            <p style="text-align: left; font-weight: bold; margin-bottom: 15px; color:#444;" id="txt-select-diff">请选择难度：</p>
+            
+            <div class="difficulty-menu">
+                <button class="diff-btn easy" onclick="startQuiz('easy')">
+                    <span id="btn-easy">简单</span> <span>★ 10题</span>
+                </button>
+                <button class="diff-btn medium" onclick="startQuiz('medium')">
+                    <span id="btn-medium">中等</span> <span>★★ 10题</span>
+                </button>
+                <button class="diff-btn hard" onclick="startQuiz('hard')">
+                    <span id="btn-hard">困难</span> <span>★★★ 10题</span>
+                </button>
+                <button class="diff-btn all" onclick="startQuiz('all')">
+                    <span id="btn-all">所有题目</span> <span>30题</span>
+                </button>
+            </div>
+        </div>
+        <div class="footer" id="txt-footer-1">天主教圣经测验</div>
+    </div>
+
+    <!-- VIEW 2: Quiz List -->
+    <div id="quiz-view" class="view-hidden">
+        <div class="quiz-header">
+            <button class="back-btn" onclick="goBack()" id="btn-back">← 返回</button>
+            <span class="mode-label" id="lbl-mode"></span>
+        </div>
+
+        <div id="quiz-list">
+            <!-- Questions injected here -->
+        </div>
+        
+        <div class="footer" id="txt-footer-2">天主教圣经测验</div>
+    </div>
+
+</div>
+
+<script>
+    // --- State ---
+    let currentLang = 'zh';
+    let currentDifficulty = null; 
+    let userAnswers = {}; 
+
+    // --- Resources ---
+    const uiText = {
+        zh: {
+            title: "格林多前书测验",
+            subtitle: "第三章：根基与工程",
+            selectDiff: "请选择难度：",
+            btnEasy: "简单",
+            btnMedium: "中等",
+            btnHard: "困难",
+            btnAll: "所有题目",
+            btnBack: "← 返回菜单",
+            footer: "天主教圣经测验",
+            langBtn: "English",
+            homeBtn: "🏠 目录",
+            correct: "✓ 回答正确！",
+            wrong: "✗ 回答错误。",
+            correctIs: "正确答案是：",
+            noteTitle: "解析："
+        },
+        en: {
+            title: "1 Corinthians Quiz",
+            subtitle: "Chapter 3: Foundation & Building",
+            selectDiff: "Select Difficulty:",
+            btnEasy: "Easy",
+            btnMedium: "Medium",
+            btnHard: "Hard",
+            btnAll: "All Questions",
+            btnBack: "← Back Menu",
+            footer: "Catholic Bible Quiz",
+            langBtn: "中文",
+            homeBtn: "🏠 Index",
+            correct: "✓ Correct!",
+            wrong: "✗ Incorrect.",
+            correctIs: "The correct answer is:",
+            noteTitle: "Note:"
+        }
+    };
+
+    // --- QUESTIONS DATA FOR CHAPTER 3 ---
+    const questionsData = [
+        // --- EASY (Ch3) ---
+        { id: 201, diff: 'easy', correct: 1, zh: { q: "1. 保禄说他不能把格林多人当作属神的人，只能当作什么人？", options: ["圣人", "属血肉的人（婴孩）", "天使", "敌人"], note: "第1节：'只能当作属血肉的人，当作在基督内的婴孩。'" }, en: { q: "1. Paul could not talk to them as spiritual people, but as...?", options: ["Saints", "Fleshly people (Infants)", "Angels", "Enemies"], note: "Verse 1: 'As people of the flesh, as infants in Christ'." } },
+        { id: 202, diff: 'easy', correct: 0, zh: { q: "2. 保禄喂给他们的是什么，而不是饭食？", options: ["奶", "肉", "酒", "水果"], note: "第2节：'我给你们喝的是奶，并非饭食。'" }, en: { q: "2. What did Paul feed them, instead of solid food?", options: ["Milk", "Meat", "Wine", "Fruit"], note: "Verse 2: 'I fed you milk, not solid food'." } },
+        { id: 203, diff: 'easy', correct: 2, zh: { q: "3. 栽种的是保禄，浇灌的是阿颇罗，但使之生长的是谁？", options: ["伯多禄", "教会", "天主", "大自然"], note: "第6节：'唯有天主使之生长。'" }, en: { q: "3. Paul planted, Apollos watered, but who caused the growth?", options: ["Peter", "The Church", "God", "Nature"], note: "Verse 6: 'But God caused the growth'." } },
+        { id: 204, diff: 'easy', correct: 1, zh: { q: "4. 保禄说：栽种的和浇灌的都是一样，但各人将按自己的什么领受赏报？", options: ["信心", "劳苦（工作）", "财富", "地位"], note: "第8节：'各人将按自己的劳苦，领受自己的赏报。'" }, en: { q: "4. Each will receive wages according to his own...?", options: ["Faith", "Labor", "Wealth", "Status"], note: "Verse 8: 'According to his own labor'." } },
+        { id: 205, diff: 'easy', correct: 0, zh: { q: "5. 保禄称信徒们是天主的田地，也是天主的什么？", options: ["建筑物", "军队", "仆人", "羊群"], note: "第9节：'你们是天主的田地，是天主的建筑物。'" }, en: { q: "5. You are God's field, God's ____?", options: ["Building", "Army", "Servants", "Flock"], note: "Verse 9: 'God's building'." } },
+        { id: 206, diff: 'easy', correct: 2, zh: { q: "6. 已经奠立好的根基是谁？", options: ["保禄", "伯多禄", "耶稣基督", "梅瑟"], note: "第11节：'这根基就是耶稣基督。'" }, en: { q: "6. Who is the foundation already laid?", options: ["Paul", "Peter", "Jesus Christ", "Moses"], note: "Verse 11: 'Which is Jesus Christ'." } },
+        { id: 207, diff: 'easy', correct: 3, zh: { q: "7. 你们难道不知道你们是天主的什么，且天主圣神住在你们内吗？", options: ["皇宫", "花园", "学校", "宫殿（圣殿）"], note: "第16节：'你们是天主的宫殿。'" }, en: { q: "7. Do you not know that you are the ____ of God?", options: ["Palace", "Garden", "School", "Temple"], note: "Verse 16: 'The temple of God'." } },
+        { id: 208, diff: 'easy', correct: 1, zh: { q: "8. 这个世界的智慧，在天主前是什么？", options: ["宝贵的", "愚妄", "必要的", "神圣的"], note: "第19节：'这个世界的智慧，在天主前原是愚妄。'" }, en: { q: "8. The wisdom of this world is what in the eyes of God?", options: ["Precious", "Foolishness", "Necessary", "Holy"], note: "Verse 19: 'Foolishness in the eyes of God'." } },
+        { id: 209, diff: 'easy', correct: 0, zh: { q: "9. 谁若毁坏天主的宫殿，天主必要毁坏他，因为天主的宫殿是？", options: ["神圣的", "昂贵的", "坚固的", "美丽的"], note: "第17节：'因为天主的宫殿是神圣的。'" }, en: { q: "9. God's temple is ____, which you are?", options: ["Holy", "Expensive", "Strong", "Beautiful"], note: "Verse 17: 'For the temple of God, which you are, is holy'." } },
+        { id: 210, diff: 'easy', correct: 2, zh: { q: "10. 保禄最后说：你们是属于基督的，而基督是属于谁的？", options: ["教会的", "世界的", "天主的", "大家的"], note: "第23节：'基督是属于天主的。'" }, en: { q: "10. You belong to Christ, and Christ belongs to...?", options: ["The Church", "The World", "God", "Everyone"], note: "Verse 23: 'And Christ belongs to God'." } },
+
+        // --- MEDIUM (Ch3) ---
+        { id: 211, diff: 'medium', correct: 1, zh: { q: "1. 你们中间有嫉妒和纷争，这岂不是证明你们是？", options: ["热心的", "属血肉的", "属神的", "被拣选的"], note: "第3节：'你们岂不是属血肉的？'" }, en: { q: "1. Since there is jealousy and strife among you, are you not...?", options: ["Zealous", "Of the flesh", "Spiritual", "Chosen"], note: "Verse 3: 'Are you not of the flesh?'" } },
+        { id: 212, diff: 'medium', correct: 0, zh: { q: "2. 保禄自称像一个精明的什么人，奠立了根基？", options: ["建筑师", "农夫", "司祭", "老师"], note: "第10节：'像一个精明的建筑师，奠立了根基。'" }, en: { q: "2. Paul, like a wise ____, laid a foundation?", options: ["Master builder", "Farmer", "Priest", "Teacher"], note: "Verse 10: 'Master builder'." } },
+        { id: 213, diff: 'medium', correct: 2, zh: { q: "3. 保禄列举了哪些材料来比喻在根基上进行的工程？（选正确的组合）", options: ["铁、铜、泥土", "水、火、风", "金、银、宝石、木、草、禾格", "信、望、爱"], note: "第12节：'金、银、宝石、木、草、禾格。'" }, en: { q: "3. What materials does Paul list for building on the foundation?", options: ["Iron, bronze", "Water, fire", "Gold, silver, stones, wood, hay, straw", "Faith, hope, love"], note: "Verse 12: 'Gold, silver, precious stones, wood, hay, straw'." } },
+        { id: 214, diff: 'medium', correct: 3, zh: { q: "4. 每个人的工程将来要被什么显露出来？", options: ["水", "风", "时间", "火"], note: "第13节：'那日子要把它显露出来，因为那日子要在火中出现。'" }, en: { q: "4. Every man's work will be revealed by what?", options: ["Water", "Wind", "Time", "Fire"], note: "Verse 13: 'Revealed with fire'." } },
+        { id: 215, diff: 'medium', correct: 1, zh: { q: "5. 如果人的工程被火烧毁了，他自己虽然得救，却像怎样得救？", options: ["像通过水", "像从火中经过", "像打赢了仗", "像跑完了步"], note: "第15节：'但他自己可以得救，可是仍像从火中经过一样。'" }, en: { q: "5. If work is burned, he will be saved, but only as through...?", options: ["Water", "Fire", "Battle", "Running"], note: "Verse 15: 'As through fire'." } },
+        { id: 216, diff: 'medium', correct: 0, zh: { q: "6. 保禄警告谁不要自欺？如果你自以为在今世是有智慧的，该变成什么？", options: ["愚妄的", "聪明的", "富有的", "强壮的"], note: "第18节：'该变成愚妄的，为成为有智慧的。'" }, en: { q: "6. If anyone thinks he is wise in this age, let him become ____ to become wise?", options: ["Foolish", "Smart", "Rich", "Strong"], note: "Verse 18: 'Let him become foolish'." } },
+        { id: 217, diff: 'medium', correct: 2, zh: { q: "7. “上主知道智者的理由，原来都是虚幻的”这句话引用自？", options: ["约伯传", "箴言", "圣咏", "训道篇"], note: "第20节引用自《圣咏》94:11。" }, en: { q: "7. 'The Lord knows the thoughts of the wise, that they are vain' quotes?", options: ["Job", "Proverbs", "Psalms", "Ecclesiastes"], note: "Quotes Psalm 94:11." } },
+        { id: 218, diff: 'medium', correct: 1, zh: { q: "8. 保禄说“我们是天主的助手（Co-workers）”，这指得是谁和谁？", options: ["保禄和伯多禄", "保禄和阿颇罗", "保禄和耶稣", "天使们"], note: "指第6-9节上下文中的保禄和阿颇罗。" }, en: { q: "8. Who are 'God's co-workers' in this context?", options: ["Paul & Peter", "Paul & Apollos", "Paul & Jesus", "Angels"], note: "Refers to Paul and Apollos (v6-9)." } },
+        { id: 219, diff: 'medium', correct: 0, zh: { q: "9. 为什么保禄说“谁也不要以人夸耀”？", options: ["因为一切都是你们的", "因为人是虚伪的", "因为夸耀是罪", "因为没有值得夸耀的人"], note: "第21节：'所以谁也不要以人夸耀，因为一切都是你们的。'" }, en: { q: "9. Why should no one boast about human beings?", options: ["Because everything belongs to you", "Humans are fake", "Boasting is sin", "No one is worthy"], note: "Verse 21: 'For all things are yours'." } },
+        { id: 220, diff: 'medium', correct: 3, zh: { q: "10. 保禄列举了“一切都是你们的”，包括世界、生命、死亡以及？", options: ["金钱", "过去", "未来", "现在和将来"], note: "第22节：'或是现在，或是将来，一切都是你们的。'" }, en: { q: "10. 'All belong to you': world, life, death, present, and...?", options: ["Money", "Past", "History", "Future"], note: "Verse 22: 'Or the present or the future'." } },
+
+        // --- HARD (Ch3) ---
+        { id: 221, diff: 'hard', correct: 2, zh: { q: "1. “他要以智者的计谋捕捉智者”引用自哪卷书？", options: ["创世纪", "出谷纪", "约伯传", "智慧篇"], note: "第19节引用自《约伯传》5:13。" }, en: { q: "1. 'He catches the wise in their own ruses' quotes which book?", options: ["Genesis", "Exodus", "Job", "Wisdom"], note: "Verse 19 quotes Job 5:13." } },
+        { id: 222, diff: 'hard', correct: 0, zh: { q: "2. 保禄在第1节使用“属血肉的人（sarkinos）”，在第3节使用“属肉性的（sarkikos）”，暗示他们生活像什么样的人？", options: ["俗人（普通人）", "外邦人", "法利塞人", "罪人"], note: "第3节：'你们...行事岂不也像俗人一样吗？'" }, en: { q: "2. Calling them 'fleshly', Paul says they behave like ordinary ____?", options: ["Men / Humans", "Gentiles", "Pharisees", "Sinners"], note: "Verse 3: 'Behaving like ordinary men'." } },
+        { id: 223, diff: 'hard', correct: 1, zh: { q: "3. 那些工程被火烧毁的人，虽然得救但受了亏损（Loss），这亏损指？", options: ["失去救恩", "失去赏报", "失去生命", "失去名誉"], note: "第15节：'他就要受亏损'（指没有赏报）。" }, en: { q: "3. If work is burned, he suffers 'loss'. What loss?", options: ["Salvation", "Reward/Wage", "Life", "Reputation"], note: "Verse 15: He will suffer loss (of reward)." } },
+        { id: 224, diff: 'hard', correct: 3, zh: { q: "4. 保禄把阿颇罗比作什么角色？", options: ["建筑师", "收割者", "奠基者", "浇灌者"], note: "第6节：'阿颇罗浇灌了。'" }, en: { q: "4. What role is Apollos compared to?", options: ["Builder", "Reaper", "Layer of foundation", "Waterer"], note: "Verse 6: 'Apollos watered'." } },
+        { id: 225, diff: 'hard', correct: 2, zh: { q: "5. 保禄强调“栽种的和浇灌的”在什么意义上是“合而为一”的？", options: ["薪水一样", "地位一样", "目标/职分一样", "都不重要"], note: "第8节：'都是一样'（目的是一致的，都是仆人）。" }, en: { q: "5. In what sense are the planter and waterer 'one'?", options: ["Same pay", "Same rank", "Same purpose/One entity", "Unimportant"], note: "Verse 8: 'Are one'." } },
+        { id: 226, diff: 'hard', correct: 0, zh: { q: "6. 保禄说“我给你们喝的是奶”，暗示格林多人当时的灵性状态是？", options: ["未成熟", "极其堕落", "已准备好受苦", "充满智慧"], note: "第2节：暗示他们灵性未成熟，不能吃干粮。" }, en: { q: "6. 'I fed you milk' implies their spiritual state was?", options: ["Immature", "Corrupt", "Ready for suffering", "Wise"], note: "Verse 2: Immature." } },
+        { id: 227, diff: 'hard', correct: 1, zh: { q: "7. 在建造的比喻中，火的作用是？", options: ["惩罚", "试验（Test）", "毁灭", "照明"], note: "第13节：'火要试验这工程。'" }, en: { q: "7. What is the function of the fire in the building metaphor?", options: ["Punish", "Test", "Destroy", "Light"], note: "Verse 13: 'Fire will test'." } },
+        { id: 228, diff: 'hard', correct: 2, zh: { q: "8. 第10节保禄说要“谨慎怎样在上面建筑”，是指？", options: ["不要用昂贵材料", "不要乱传福音", "教导的教义质量", "建筑教堂的风格"], note: "指在这个根基（基督）上建立的教导和信徒的生命质量。" }, en: { q: "8. 'Take care how he builds upon it' refers to?", options: ["Cost", "Preaching style", "Quality of doctrine/teaching", "Architecture"], note: "Quality of teaching." } },
+        { id: 229, diff: 'hard', correct: 3, zh: { q: "9. 为什么凡人不可夸耀？", options: ["因为人会死", "因为人有罪", "因为人无知", "因为一切都是天主赐予的（一切都是你们的）"], note: "第21节上下文。" }, en: { q: "9. Why must no one boast in men?", options: ["Mortality", "Sin", "Ignorance", "Everything is God's gift to you"], note: "Verse 21 context." } },
+        { id: 230, diff: 'hard', correct: 0, zh: { q: "10. 整章经文的核心目的是解决什么问题？", options: ["基于领袖崇拜的分裂", "乱伦问题", "吃祭肉问题", "复活的疑虑"], note: "解决'我是属保禄的，我是属阿颇罗的'这种分裂。" }, en: { q: "10. The core purpose of this chapter addresses?", options: ["Division based on leaders", "Incest", "Idol meat", "Resurrection"], note: "Division about Paul/Apollos." } }
+    ];
+
+    // --- Logic ---
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateUIText();
+        if (currentDifficulty) {
+            renderQuizList();
+        }
+    }
+
+    function updateUIText() {
+        const t = uiText[currentLang];
+        
+        // Navbar
+        document.querySelector('.lang-switch').textContent = t.langBtn;
+        document.getElementById('link-home').textContent = t.homeBtn;
+        
+        // Welcome View
+        document.getElementById('txt-title').textContent = t.title;
+        document.getElementById('txt-subtitle').textContent = t.subtitle;
+        document.getElementById('txt-select-diff').textContent = t.selectDiff;
+        document.getElementById('btn-easy').innerHTML = `${t.btnEasy} <span>★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-medium').innerHTML = `${t.btnMedium} <span>★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-hard').innerHTML = `${t.btnHard} <span>★★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-all').innerHTML = `${t.btnAll} <span>30${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('txt-footer-1').textContent = t.footer;
+
+        // Quiz View
+        document.getElementById('btn-back').textContent = t.btnBack;
+        document.getElementById('txt-footer-2').textContent = t.footer;
+        
+        if (currentDifficulty) {
+            let diffLabel = "";
+            if(currentDifficulty === 'easy') diffLabel = t.btnEasy;
+            else if(currentDifficulty === 'medium') diffLabel = t.btnMedium;
+            else if(currentDifficulty === 'hard') diffLabel = t.btnHard;
+            else diffLabel = t.btnAll;
+            document.getElementById('lbl-mode').textContent = diffLabel;
+        }
+    }
+
+    function startQuiz(difficulty) {
+        currentDifficulty = difficulty;
+        document.getElementById('welcome-view').classList.add('view-hidden');
+        document.getElementById('quiz-view').classList.remove('view-hidden');
+        updateUIText();
+        renderQuizList();
+        window.scrollTo(0,0);
+    }
+
+    function goBack() {
+        currentDifficulty = null;
+        document.getElementById('welcome-view').classList.remove('view-hidden');
+        document.getElementById('quiz-view').classList.add('view-hidden');
+    }
+
+    function renderQuizList() {
+        const container = document.getElementById('quiz-list');
+        container.innerHTML = ''; 
+        const t = uiText[currentLang];
+
+        const filteredQuestions = questionsData.filter(q => {
+            if (currentDifficulty === 'all') return true;
+            return q.diff === currentDifficulty;
+        });
+
+        if (filteredQuestions.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">No questions found.</div>`;
+            return;
+        }
+
+        filteredQuestions.forEach((item) => {
+            const data = item[currentLang];
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.textContent = data.q;
+            card.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback-box';
+
+            const userAnswer = userAnswers[item.id]; 
+            const isAnswered = userAnswer !== undefined;
+
+            data.options.forEach((optText, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = optText;
+                
+                if (isAnswered) {
+                    btn.disabled = true;
+                    if (optIndex === item.correct) {
+                        btn.classList.add('correct');
+                    } else if (optIndex === userAnswer) {
+                        btn.classList.add('wrong');
+                    }
+                }
+
+                btn.onclick = function() {
+                    handleAnswer(item.id, item.correct, optIndex, grid, feedback, item);
+                };
+                grid.appendChild(btn);
+            });
+
+            if (isAnswered) {
+                const isCorrect = userAnswer === item.correct;
+                if (isCorrect) {
+                    feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-correct');
+                } else {
+                    const correctText = data.options[item.correct];
+                    feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-wrong');
+                }
+            }
+
+            card.appendChild(grid);
+            card.appendChild(feedback);
+            container.appendChild(card);
+        });
+    }
+
+    function handleAnswer(qId, correctIndex, selectedIndex, grid, feedback, item) {
+        const t = uiText[currentLang];
+        const data = item[currentLang];
+
+        userAnswers[qId] = selectedIndex;
+        
+        const allBtns = grid.querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+        
+        const clickedBtn = allBtns[selectedIndex];
+        const correctBtn = allBtns[correctIndex];
+
+        if (selectedIndex === correctIndex) {
+            clickedBtn.classList.add('correct');
+            feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-correct');
+        } else {
+            clickedBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+            const correctText = data.options[correctIndex];
+            feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-wrong');
+        }
+    }
+
+    window.onload = function() {
+        updateUIText();
+    };
+</script>
+
+</body>
+</html>

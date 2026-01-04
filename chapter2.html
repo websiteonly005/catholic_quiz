@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catholic Bible Quiz - 1 Corinthians Ch.2</title>
+    <style>
+        /* 保持原有的优美样式 */
+        :root {
+            --primary-color: #0066cc;
+            --bg-color: #f0f2f5;
+            --correct-bg: #d4edda;
+            --correct-text: #155724;
+            --wrong-bg: #f8d7da;
+            --wrong-text: #721c24;
+            --card-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between; /* 修改为两端对齐 */
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .lang-switch {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .view-hidden { display: none !important; }
+
+        .welcome-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: var(--card-radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .welcome-title { color: #2c3e50; font-size: 1.6rem; margin-bottom: 10px; }
+        .welcome-subtitle { color: #666; margin-bottom: 30px; }
+
+        .difficulty-menu { display: flex; flex-direction: column; gap: 15px; }
+
+        .diff-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 25px;
+            padding-right: 25px;
+        }
+        .diff-btn:active { transform: scale(0.98); }
+
+        .diff-btn.easy { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3); }
+        .diff-btn.medium { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); box-shadow: 0 4px 10px rgba(253, 160, 133, 0.3); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .diff-btn.hard { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); box-shadow: 0 4px 10px rgba(235, 51, 73, 0.3); }
+        .diff-btn.all { background: white; color: #444; border: 2px solid #eee; }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #0066cc;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: -10px;
+        }
+
+        .mode-label { font-weight: bold; color: #555; font-size: 0.9rem; text-transform: uppercase; }
+
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1a1a1a; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+        button.option-btn {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 1rem;
+            color: #444;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.4;
+        }
+
+        button.option-btn:active { background-color: #e2e6ea; }
+        button.option-btn.correct { background-color: var(--correct-bg); border-color: #c3e6cb; color: var(--correct-text); font-weight: 500; }
+        button.option-btn.wrong { background-color: var(--wrong-bg); border-color: #f5c6cb; color: var(--wrong-text); opacity: 0.7; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .feedback-box.show-correct { display: block; background-color: var(--correct-bg); color: var(--correct-text); border: 1px solid #c3e6cb; }
+        .feedback-box.show-wrong { display: block; background-color: var(--wrong-bg); color: var(--wrong-text); border: 1px solid #f5c6cb; }
+
+        .explanation-text { margin-top: 8px; font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="home-link" id="link-home">🏠 目录 (Index)</a>
+        <button class="lang-switch" onclick="toggleLanguage()">English</button>
+    </div>
+
+    <!-- VIEW 1: Welcome / Difficulty Selection -->
+    <div id="welcome-view">
+        <div class="welcome-card">
+            <h1 class="welcome-title" id="txt-title">格林多前书测验</h1>
+            <p class="welcome-subtitle" id="txt-subtitle">第二章：天主的智慧与圣神</p>
+            
+            <p style="text-align: left; font-weight: bold; margin-bottom: 15px; color:#444;" id="txt-select-diff">请选择难度：</p>
+            
+            <div class="difficulty-menu">
+                <button class="diff-btn easy" onclick="startQuiz('easy')">
+                    <span id="btn-easy">简单</span> <span>★ 10题</span>
+                </button>
+                <button class="diff-btn medium" onclick="startQuiz('medium')">
+                    <span id="btn-medium">中等</span> <span>★★ 10题</span>
+                </button>
+                <button class="diff-btn hard" onclick="startQuiz('hard')">
+                    <span id="btn-hard">困难</span> <span>★★★ 10题</span>
+                </button>
+                <button class="diff-btn all" onclick="startQuiz('all')">
+                    <span id="btn-all">所有题目</span> <span>30题</span>
+                </button>
+            </div>
+        </div>
+        <div class="footer" id="txt-footer-1">天主教圣经测验</div>
+    </div>
+
+    <!-- VIEW 2: Quiz List -->
+    <div id="quiz-view" class="view-hidden">
+        <div class="quiz-header">
+            <button class="back-btn" onclick="goBack()" id="btn-back">← 返回</button>
+            <span class="mode-label" id="lbl-mode"></span>
+        </div>
+
+        <div id="quiz-list">
+            <!-- Questions injected here -->
+        </div>
+        
+        <div class="footer" id="txt-footer-2">天主教圣经测验</div>
+    </div>
+
+</div>
+
+<script>
+    // --- State ---
+    let currentLang = 'zh';
+    let currentDifficulty = null; 
+    let userAnswers = {}; 
+
+    // --- Resources ---
+    const uiText = {
+        zh: {
+            title: "格林多前书测验",
+            subtitle: "第二章：天主的智慧与圣神",
+            selectDiff: "请选择难度：",
+            btnEasy: "简单",
+            btnMedium: "中等",
+            btnHard: "困难",
+            btnAll: "所有题目",
+            btnBack: "← 返回菜单",
+            footer: "天主教圣经测验",
+            langBtn: "English",
+            homeBtn: "🏠 目录",
+            correct: "✓ 回答正确！",
+            wrong: "✗ 回答错误。",
+            correctIs: "正确答案是：",
+            noteTitle: "解析："
+        },
+        en: {
+            title: "1 Corinthians Quiz",
+            subtitle: "Chapter 2: True Wisdom & The Spirit",
+            selectDiff: "Select Difficulty:",
+            btnEasy: "Easy",
+            btnMedium: "Medium",
+            btnHard: "Hard",
+            btnAll: "All Questions",
+            btnBack: "← Back Menu",
+            footer: "Catholic Bible Quiz",
+            langBtn: "中文",
+            homeBtn: "🏠 Index",
+            correct: "✓ Correct!",
+            wrong: "✗ Incorrect.",
+            correctIs: "The correct answer is:",
+            noteTitle: "Note:"
+        }
+    };
+
+    // --- QUESTIONS DATA FOR CHAPTER 2 ---
+    const questionsData = [
+        // --- EASY QUESTIONS (1-10) ---
+        { id: 101, diff: 'easy', correct: 1, zh: { q: "1. 保禄说他来到格林多时，并没有用什么来宣传天主的奥义？", options: ["祈祷和禁食", "高超的言论或智慧", "宗徒的权威", "罗马的法律"], note: "第1节：'并不是用高超的言论或智慧。'" }, en: { q: "1. Paul says he did not come proclaiming the mystery of God with what?", options: ["Prayer and fasting", "Sublimity of words or wisdom", "Apostolic authority", "Roman law"], note: "Verse 1: 'Not with sublimity of words or of wisdom'." } },
+        { id: 102, diff: 'easy', correct: 2, zh: { q: "2. 保禄决心在他们中间不知道别的，只知道谁？", options: ["梅瑟", "亚巴郎", "耶稣基督和他被钉在十字架上", "若翰洗者"], note: "第2节：'只知道耶稣基督，这被钉在十字架上的耶稣基督。'" }, en: { q: "2. Paul resolved to know nothing among them except whom?", options: ["Moses", "Abraham", "Jesus Christ and him crucified", "John the Baptist"], note: "Verse 2: 'Jesus Christ, and him crucified'." } },
+        { id: 103, diff: 'easy', correct: 0, zh: { q: "3. 保禄在他们中间时，心里感觉如何？", options: ["软弱恐惧，战战兢兢", "自信满满", "愤怒不满", "骄傲自大"], note: "第3节：'我在你们那里时，又软弱，又恐惧，又甚战兢。'" }, en: { q: "3. How did Paul feel when he was with them?", options: ["Weakness, fear, and trembling", "Full of confidence", "Angry and upset", "Proud and arrogant"], note: "Verse 3: 'In weakness and in fear and in much trembling'." } },
+        { id: 104, diff: 'easy', correct: 1, zh: { q: "4. 我们的信德不应建立在人的智慧上，而应建立在什么上？", options: ["历史事实", "天主的德能", "个人的感觉", "教会的传统"], note: "第5节：'为使你们的信德不是建立在人的智慧上，而是建立在天主的德能上。'" }, en: { q: "4. Our faith should not rest on human wisdom but on what?", options: ["Historical facts", "The power of God", "Personal feelings", "Church tradition"], note: "Verse 5: 'Rest not on human wisdom but on the power of God'." } },
+        { id: 105, diff: 'easy', correct: 3, zh: { q: "5. 天主为爱他的人所准备的，是眼睛未曾看见，耳朵未曾听见，以及？", options: ["手未曾触摸的", "口未曾尝过的", "脚未曾走过的", "人心未曾想到的"], note: "第9节：'人心也未曾想到的。'" }, en: { q: "5. What God prepared for those who love him has not been seen, heard, or...?", options: ["Touched by hands", "Tasted by mouth", "Walked by feet", "Entered the human heart"], note: "Verse 9: 'Nor has it entered the human heart'." } },
+        { id: 106, diff: 'easy', correct: 0, zh: { q: "6. 谁洞察一切，就连天主的深奥事理也洞察？", options: ["圣神", "撒旦", "天使", "先知"], note: "第10节：'因为圣神洞察一切，就连天主的深奥事理他也洞察。'" }, en: { q: "6. Who scrutinizes everything, even the depths of God?", options: ["The Spirit", "Satan", "Angels", "Prophets"], note: "Verse 10: 'The Spirit scrutinizes everything'." } },
+        { id: 107, diff: 'easy', correct: 2, zh: { q: "7. 除了人内里的灵，谁能知道人的事？同样，除了天主之神，谁能明了天主的事？", options: ["任何人", "魔鬼", "没有人", "君王"], note: "第11节：'同样，除了天主之神外，也没有人明了天主的事。'" }, en: { q: "7. Just as only the human spirit knows human depths, so no one knows God's depths but...?", options: ["Anyone", "The devil", "No one (except Spirit of God)", "Kings"], note: "Verse 11: 'No one knows what pertains to God except the Spirit of God'." } },
+        { id: 108, diff: 'easy', correct: 1, zh: { q: "8. 我们所领受的不是“世俗之神”，而是？", options: ["智慧之神", "出于天主之神", "力量之神", "财富之神"], note: "第12节：'我们所领受的，并非世俗之神，而是出于天主之神。'" }, en: { q: "8. We have not received the spirit of the world, but...?", options: ["Spirit of wisdom", "The Spirit that is from God", "Spirit of power", "Spirit of wealth"], note: "Verse 12: 'The Spirit that is from God'." } },
+        { id: 109, diff: 'easy', correct: 0, zh: { q: "9. “属血气（血肉）”的人，能不能领受天主圣神的事？", options: ["不能，因为他视之为愚妄", "能，如果他努力学习", "能，因为人有智慧", "不确定"], note: "第14节：'属血气的人，不能领受天主圣神的事，因为为他是愚妄。'" }, en: { q: "9. Can the 'natural person' accept what pertains to the Spirit of God?", options: ["No, it is foolishness to him", "Yes, if he studies", "Yes, because man is wise", "Unsure"], note: "Verse 14: 'Does not accept... for to him it is foolishness'." } },
+        { id: 110, diff: 'easy', correct: 3, zh: { q: "10. 章节结束时保禄说：但是我们有谁的心意？", options: ["保禄的", "梅瑟的", "天使的", "基督的"], note: "第16节：'但是我们要有基督的心意。'" }, en: { q: "10. How does Paul conclude: 'But we have the mind of ____'?", options: ["Paul", "Moses", "Angels", "Christ"], note: "Verse 16: 'But we have the mind of Christ'." } },
+
+        // --- MEDIUM QUESTIONS (11-20) ---
+        { id: 111, diff: 'medium', correct: 1, zh: { q: "1. 保禄说他的言论和宣讲，不是在于智慧动听的言词，而是在于什么？", options: ["律法的严谨", "圣神和德能的表现", "历史的考证", "修辞的华丽"], note: "第4节：'在于圣神和德能的表现。'" }, en: { q: "1. Paul's message came not in persuasive words of wisdom, but in demonstration of?", options: ["Strict law", "Spirit and power", "Historical proof", "Rhetoric"], note: "Verse 4: 'Demonstration of Spirit and power'." } },
+        { id: 112, diff: 'medium', correct: 2, zh: { q: "2. 保禄在什么人中间也讲智慧？", options: ["犹太人", "外邦人", "成全（成熟）的人", "反对者"], note: "第6节：'在成全的人中，我们也讲智慧。'" }, en: { q: "2. Among whom does Paul speak wisdom?", options: ["Jews", "Gentiles", "The mature", "Opponents"], note: "Verse 6: 'Among the mature we do speak wisdom'." } },
+        { id: 113, diff: 'medium', correct: 0, zh: { q: "3. 今世的公侯（统治者）如果认识了这智慧，就不会怎么做？", options: ["把光荣的主钉在十字架上", "迫害保禄", "拒绝受洗", "建造偶像"], note: "第8节：'如果他们认识了，决不至把光荣的主钉在十字架上。'" }, en: { q: "3. If the rulers of this age knew this wisdom, they would not have...?", options: ["Crucified the Lord of glory", "Persecuted Paul", "Refused baptism", "Built idols"], note: "Verse 8: 'Would not have crucified the Lord of glory'." } },
+        { id: 114, diff: 'medium', correct: 3, zh: { q: "4. 保禄提到的这“智慧”是什么性质的？", options: ["公开辩论的", "希腊哲学的", "世俗政治的", "奥秘的、隐藏的"], note: "第7节：'我们所讲的，乃是那隐藏的、奥秘的天主的智慧。'" }, en: { q: "4. What is the nature of the wisdom Paul speaks?", options: ["Public debate", "Greek philosophy", "Political", "Mysterious, hidden"], note: "Verse 7: 'God's wisdom, mysterious, hidden'." } },
+        { id: 115, diff: 'medium', correct: 1, zh: { q: "5. 天主在万世之前，为使我们受光荣，预定了什么？", options: ["梅瑟律法", "隐藏的智慧", "罗马帝国", "所罗门的圣殿"], note: "第7节：'这智慧是天主在万世之前，为使我们受光荣所预定的。'" }, en: { q: "5. What did God predestine before the ages for our glory?", options: ["Mosaic Law", "Hidden wisdom", "Roman Empire", "Solomon's Temple"], note: "Verse 7: 'This wisdom God predestined...'." } },
+        { id: 116, diff: 'medium', correct: 2, zh: { q: "6. 我们用什么言辞来讲论天主所恩赐的事？", options: ["人类智慧教导的", "经师教导的", "圣神教导的", "君王教导的"], note: "第13节：'不是用人的智慧所教导的言辞，而是用圣神所教导的言辞。'" }, en: { q: "6. We speak of these things in words taught by whom?", options: ["Human wisdom", "Scribes", "The Spirit", "Kings"], note: "Verse 13: 'Words taught by the Spirit'." } },
+        { id: 117, diff: 'medium', correct: 0, zh: { q: "7. 属灵（神）的人能审断一切，但他自己却怎样？", options: ["不为任何人所审断", "被所有人审断", "只被天使审断", "需要自我审判"], note: "第15节：'属神的人审断一切，但他不为任何人所审断。'" }, en: { q: "7. The spiritual person judges all things but is himself judged by...?", options: ["No one", "Everyone", "Angels only", "Himself"], note: "Verse 15: 'Judged by no one'." } },
+        { id: 118, diff: 'medium', correct: 1, zh: { q: "8. “眼睛未曾看见...”这段经文引用自旧约哪位先知？（参考注脚）", options: ["耶肋米亚", "依撒意亚", "达尼尔", "厄则克耳"], note: "引用自《依撒意亚》64:3。" }, en: { q: "8. 'Eye has not seen...' is a quote from which prophet?", options: ["Jeremiah", "Isaiah", "Daniel", "Ezekiel"], note: "Quotes Isaiah 64:3." } },
+        { id: 119, diff: 'medium', correct: 3, zh: { q: "9. 属血气的人不仅不领受，甚至不能认识圣神的事，因为这些事需要怎么看？", options: ["用逻辑推演", "用肉眼观察", "用历史验证", "唯有借圣神（属灵的眼光）鉴别"], note: "第14节：'因为这些事，只有借圣神才可鉴别。'" }, en: { q: "9. The natural person cannot know spiritual things because they are...?", options: ["Logically deduced", "Seen with eyes", "Historically verified", "Spiritually discerned"], note: "Verse 14: 'Because they are spiritually discerned'." } },
+        { id: 120, diff: 'medium', correct: 0, zh: { q: "10. 保禄在第4节说，他的宣讲不在于动听的言词，以免什么情况发生？", options: ["以免信德建立在人意上", "以免被罗马人抓捕", "以免被犹太人嫉妒", "以免显得没有文化"], note: "第5节：'为使你们的信德不是建立在人的智慧上。'" }, en: { q: "10. Paul avoided persuasive words so that their faith might not rest on...?", options: ["Human wisdom", "Fear of Rome", "Jewish jealousy", "Ignorance"], note: "Verse 5: 'Rest not on human wisdom'." } },
+
+        // --- HARD QUESTIONS (21-30) ---
+        { id: 121, diff: 'hard', correct: 1, zh: { q: "1. 在第6节提到“今世的公侯（统治者）”，保禄说他们的下场是？", options: ["将统治世界", "正在消逝/废除", "将悔改", "将获得智慧"], note: "第6节：'也不是今世公侯的智慧，他们都要被废除。'" }, en: { q: "1. What does Paul say is happening to the 'rulers of this age' in verse 6?", options: ["Will rule the world", "Are passing away / doomed", "Will repent", "Will gain wisdom"], note: "Verse 6: 'Rulers... who are passing away'." } },
+        { id: 122, diff: 'hard', correct: 2, zh: { q: "2. 第16节引用经文：“谁知道了上主的心意，能指教他呢？”原出处是？", options: ["创世纪", "圣咏", "依撒意亚", "申命纪"], note: "引用自《依撒意亚》40:13。" }, en: { q: "2. Verse 16 'Who has known the mind of the Lord...' quotes from?", options: ["Genesis", "Psalms", "Isaiah", "Deuteronomy"], note: "Quotes Isaiah 40:13." } },
+        { id: 123, diff: 'hard', correct: 0, zh: { q: "3. 保禄对比了“属血气的人”和谁？", options: ["属神（灵）的人", "属肉性的人", "属智慧的人", "属法律的人"], note: "第14-15节对比了'属血气的人'和'属神的人'。" }, en: { q: "3. Paul contrasts the 'natural person' with whom?", options: ["The spiritual person", "The fleshy person", "The wise person", "The legal person"], note: "Verses 14-15 contrast natural vs spiritual." } },
+        { id: 124, diff: 'hard', correct: 3, zh: { q: "4. “圣神洞察一切”中的“深奥事理”，希腊原文含义接近？", options: ["高处", "宽处", "长处", "深处 (Depths)"], note: "第10节：The depths of God." }, en: { q: "4. In 'Spirit scrutinizes everything', the 'deep things' refers to?", options: ["Heights", "Widths", "Lengths", "Depths"], note: "Verse 10: The depths of God." } },
+        { id: 125, diff: 'hard', correct: 1, zh: { q: "5. 保禄说我们是用“圣神教导的言辞”，向谁解释圣神的事？", options: ["向犹太人", "向属神（灵）的人", "向希腊人", "向统治者"], note: "第13节：'给属神的人，解释属神的事。'" }, en: { q: "5. We interpret spiritual truths to whom?", options: ["Jews", "Those who are spiritual", "Greeks", "Rulers"], note: "Verse 13: 'Spiritual truths to those who are spiritual'." } },
+        { id: 126, diff: 'hard', correct: 2, zh: { q: "6. 为什么保禄说“今世的智慧”不是真正的智慧？", options: ["因为它太难懂", "因为它不实用", "因为它导致了把光荣的主钉死", "因为它来自埃及"], note: "第8节推论：如果他们真有智慧，就不会钉死主。" }, en: { q: "6. Why is the 'wisdom of this age' not true wisdom?", options: ["Too hard", "Not practical", "It crucified the Lord", "From Egypt"], note: "Verse 8: If they knew, they wouldn't have crucified Him." } },
+        { id: 127, diff: 'hard', correct: 0, zh: { q: "7. 在第1节，保禄用来描述他宣讲方式的词汇，有些古卷作“见证（testimony）”，有些作什么？", options: ["奥义（mystery）", "法律（law）", "福音（gospel）", "预言（prophecy）"], note: "第1节：'宣讲天主的奥义（mystery）'，但在一些古卷中作'见证'。" }, en: { q: "7. In v1, Paul proclaims the 'mystery' of God. Some manuscripts say?", options: ["Testimony", "Law", "Gospel", "Prophecy"], note: "Verse 1: Mystery (mysterion) or Testimony (martyrion)." } },
+        { id: 128, diff: 'hard', correct: 3, zh: { q: "8. 属血气的人视属神的事为“愚妄”，这与第一章的哪个主题呼应？", options: ["教会的分裂", "洗礼的争论", "保禄的权威", "十字架的道理为丧亡者是愚妄"], note: "呼应1:18 '十字架的道理...为丧亡的人是愚妄'。" }, en: { q: "8. The natural man seeing spiritual things as 'foolishness' echoes Ch1 theme?", options: ["Division", "Baptism", "Authority", "Cross is foolishness to perishing"], note: "Echoes 1:18." } },
+        { id: 129, diff: 'hard', correct: 1, zh: { q: "9. 保禄说“我知道什么”来强调他信息的中心？", options: ["复活的基督", "被钉的基督", "再来的基督", "行医的基督"], note: "第2节：强调'被钉在十字架上的耶稣基督'。" }, en: { q: "9. Paul emphasizes 'Crucified Christ' to show the center of his...?", options: ["Hope", "Knowledge/Message", "Travels", "Miracles"], note: "Verse 2: 'Resolved to know nothing...'" } },
+        { id: 130, diff: 'hard', correct: 0, zh: { q: "10. 本章的核心对比是？", options: ["天主的智慧 vs 世人的智慧", "保禄 vs 阿颇罗", "受割损 vs 未受割损", "婚姻 vs 守贞"], note: "整章都在对比两种智慧和两种人（属血气vs属神）。" }, en: { q: "10. What is the core contrast of Chapter 2?", options: ["God's Wisdom vs Man's Wisdom", "Paul vs Apollos", "Circumcision", "Marriage"], note: "The whole chapter contrasts two wisdoms." } }
+    ];
+
+    // --- Logic ---
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateUIText();
+        if (currentDifficulty) {
+            renderQuizList();
+        }
+    }
+
+    function updateUIText() {
+        const t = uiText[currentLang];
+        
+        // Navbar
+        document.querySelector('.lang-switch').textContent = t.langBtn;
+        document.getElementById('link-home').textContent = t.homeBtn;
+        
+        // Welcome View
+        document.getElementById('txt-title').textContent = t.title;
+        document.getElementById('txt-subtitle').textContent = t.subtitle;
+        document.getElementById('txt-select-diff').textContent = t.selectDiff;
+        document.getElementById('btn-easy').innerHTML = `${t.btnEasy} <span>★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-medium').innerHTML = `${t.btnMedium} <span>★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-hard').innerHTML = `${t.btnHard} <span>★★★ 10${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('btn-all').innerHTML = `${t.btnAll} <span>30${currentLang==='zh'?'题':'Q'}</span>`;
+        document.getElementById('txt-footer-1').textContent = t.footer;
+
+        // Quiz View
+        document.getElementById('btn-back').textContent = t.btnBack;
+        document.getElementById('txt-footer-2').textContent = t.footer;
+        
+        if (currentDifficulty) {
+            let diffLabel = "";
+            if(currentDifficulty === 'easy') diffLabel = t.btnEasy;
+            else if(currentDifficulty === 'medium') diffLabel = t.btnMedium;
+            else if(currentDifficulty === 'hard') diffLabel = t.btnHard;
+            else diffLabel = t.btnAll;
+            document.getElementById('lbl-mode').textContent = diffLabel;
+        }
+    }
+
+    function startQuiz(difficulty) {
+        currentDifficulty = difficulty;
+        document.getElementById('welcome-view').classList.add('view-hidden');
+        document.getElementById('quiz-view').classList.remove('view-hidden');
+        updateUIText();
+        renderQuizList();
+        window.scrollTo(0,0);
+    }
+
+    function goBack() {
+        currentDifficulty = null;
+        document.getElementById('welcome-view').classList.remove('view-hidden');
+        document.getElementById('quiz-view').classList.add('view-hidden');
+    }
+
+    function renderQuizList() {
+        const container = document.getElementById('quiz-list');
+        container.innerHTML = ''; 
+        const t = uiText[currentLang];
+
+        const filteredQuestions = questionsData.filter(q => {
+            if (currentDifficulty === 'all') return true;
+            return q.diff === currentDifficulty;
+        });
+
+        if (filteredQuestions.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">No questions found.</div>`;
+            return;
+        }
+
+        filteredQuestions.forEach((item) => {
+            const data = item[currentLang];
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.textContent = data.q;
+            card.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback-box';
+
+            const userAnswer = userAnswers[item.id]; 
+            const isAnswered = userAnswer !== undefined;
+
+            data.options.forEach((optText, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = optText;
+                
+                if (isAnswered) {
+                    btn.disabled = true;
+                    if (optIndex === item.correct) {
+                        btn.classList.add('correct');
+                    } else if (optIndex === userAnswer) {
+                        btn.classList.add('wrong');
+                    }
+                }
+
+                btn.onclick = function() {
+                    handleAnswer(item.id, item.correct, optIndex, grid, feedback, item);
+                };
+                grid.appendChild(btn);
+            });
+
+            if (isAnswered) {
+                const isCorrect = userAnswer === item.correct;
+                if (isCorrect) {
+                    feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-correct');
+                } else {
+                    const correctText = data.options[item.correct];
+                    feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+                    feedback.classList.add('show-wrong');
+                }
+            }
+
+            card.appendChild(grid);
+            card.appendChild(feedback);
+            container.appendChild(card);
+        });
+    }
+
+    function handleAnswer(qId, correctIndex, selectedIndex, grid, feedback, item) {
+        const t = uiText[currentLang];
+        const data = item[currentLang];
+
+        userAnswers[qId] = selectedIndex;
+        
+        const allBtns = grid.querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+        
+        const clickedBtn = allBtns[selectedIndex];
+        const correctBtn = allBtns[correctIndex];
+
+        if (selectedIndex === correctIndex) {
+            clickedBtn.classList.add('correct');
+            feedback.innerHTML = `<strong>${t.correct}</strong><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-correct');
+        } else {
+            clickedBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+            const correctText = data.options[correctIndex];
+            feedback.innerHTML = `<strong>${t.wrong}</strong><br>${t.correctIs} <b>${correctText}</b><div class="explanation-text">${t.noteTitle} ${data.note}</div>`;
+            feedback.classList.add('show-wrong');
+        }
+    }
+
+    window.onload = function() {
+        updateUIText();
+    };
+</script>
+
+</body>
+</html>
